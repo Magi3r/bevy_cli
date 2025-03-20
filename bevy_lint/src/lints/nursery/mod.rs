@@ -16,7 +16,7 @@ impl LintGroup for Nursery {
     ];
 
     fn register_passes(store: &mut LintStore) {
+        // `duplicate_bevy_dependencies` is a Cargo pass, so it does not get registered here.
         store.register_late_pass(|_| Box::new(zst_query::ZstQuery::default()));
-        todo!("duplicate bevy dependencies cargo pass");
     }
 }

@@ -16,6 +16,8 @@ pub mod restriction;
 pub mod style;
 pub mod suspicious;
 
+mod cargo;
+
 pub(crate) fn register_lints(store: &mut LintStore) {
     complexity::Complexity::register_lints(store);
     correctness::Correctness::register_lints(store);
@@ -36,6 +38,9 @@ pub(crate) fn register_passes(store: &mut LintStore) {
     restriction::Restriction::register_passes(store);
     style::Style::register_passes(store);
     suspicious::Suspicious::register_passes(store);
+
+    // Register all Cargo passes.
+    store.register_late_pass(|_| Box::new(cargo::Cargo::default()));
 }
 
 pub(crate) fn register_groups(store: &mut LintStore) {
