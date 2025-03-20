@@ -1,14 +1,15 @@
-use rustc_lint::Level;
+use rustc_lint::{Level, Lint, LintStore};
 
-use crate::declare_bevy_group;
+use super::LintGroup;
 
-declare_bevy_group! {
-    /// A group of deny-by-default lints that check for outright wrong or useless code.
-    ///
-    /// These lints are carefully picked to be free of false positives. You should avoid
-    /// `#[allow(...)]`-ing these lints without a _very_ good reason.
-    pub static CORRECTNESS = {
-        name: "bevy::correctness",
-        level: Level::Deny,
-    };
+pub struct Correctness;
+
+impl LintGroup for Correctness {
+    const NAME: &str = "bevy::correctness";
+    const LEVEL: Level = Level::Deny;
+    const LINTS: &[&Lint] = &[];
+
+    fn register_passes(_store: &mut LintStore) {
+        todo!()
+    }
 }

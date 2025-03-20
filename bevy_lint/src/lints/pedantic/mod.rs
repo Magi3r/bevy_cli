@@ -1,14 +1,15 @@
-use rustc_lint::Level;
+use rustc_lint::{Level, Lint, LintStore};
 
-use crate::declare_bevy_group;
+use super::LintGroup;
 
-declare_bevy_group! {
-    /// A group of lints that make the linter incredibly nit-picky.
-    ///
-    /// If you enable this group, expect to liberally apply `#[allow(...)]` attributes throughout your
-    /// code.
-    pub static PEDANTIC = {
-        name: "bevy::pedantic",
-        level: Level::Allow,
-    };
+pub struct Pedantic;
+
+impl LintGroup for Pedantic {
+    const NAME: &str = "bevy::pedantic";
+    const LEVEL: Level = Level::Allow;
+    const LINTS: &[&Lint] = &[];
+
+    fn register_passes(_store: &mut LintStore) {
+        todo!()
+    }
 }

@@ -1,13 +1,15 @@
-use rustc_lint::Level;
+use rustc_lint::{Level, Lint, LintStore};
 
-use crate::declare_bevy_group;
+use super::LintGroup;
 
-declare_bevy_group! {
-    /// A group similar to [`CORRECTNESS`] that checks for suspicious or usually wrong code.
-    ///
-    /// The linted code may have been written intentionally, but should probably still be fixed.
-    pub static SUSPICIOUS = {
-        name: "bevy::suspicious",
-        level: Level::Warn,
-    };
+pub struct Suspicious;
+
+impl LintGroup for Suspicious {
+    const NAME: &str = "bevy::suspicious";
+    const LEVEL: Level = Level::Warn;
+    const LINTS: &[&Lint] = &[];
+
+    fn register_passes(_store: &mut LintStore) {
+        todo!()
+    }
 }

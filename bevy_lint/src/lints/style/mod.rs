@@ -1,13 +1,15 @@
-use rustc_lint::Level;
+use rustc_lint::{Level, Lint, LintStore};
 
-use crate::declare_bevy_group;
+use super::LintGroup;
 
-declare_bevy_group! {
-    /// A group of lints that encourage idiomatic code.
-    ///
-    /// These lints are opinionated and may be freely disabled if you disagree with their suggestions.
-    pub static STYLE = {
-        name: "bevy::style",
-        level: Level::Warn,
-    };
+pub struct Style;
+
+impl LintGroup for Style {
+    const NAME: &str = "bevy::style";
+    const LEVEL: Level = Level::Warn;
+    const LINTS: &[&Lint] = &[];
+
+    fn register_passes(_store: &mut LintStore) {
+        todo!()
+    }
 }

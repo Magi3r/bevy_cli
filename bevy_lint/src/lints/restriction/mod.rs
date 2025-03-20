@@ -1,15 +1,15 @@
-use rustc_lint::Level;
+use rustc_lint::{Level, Lint, LintStore};
 
-use crate::declare_bevy_group;
+use super::LintGroup;
 
-declare_bevy_group! {
-    /// A group of opt-in lints that restrict you from writing certain code.
-    ///
-    /// These are designed for scenarios where you want to increase the consistency of your code-base
-    /// and reject certain patterns. They should not all be enabled at once, but instead specific lints
-    /// should be individually enabled.
-    pub static RESTRICTION = {
-        name: "bevy::restriction",
-        level: Level::Allow,
-    };
+pub struct Restriction;
+
+impl LintGroup for Restriction {
+    const NAME: &str = "bevy::restriction";
+    const LEVEL: Level = Level::Allow;
+    const LINTS: &[&Lint] = &[];
+
+    fn register_passes(_store: &mut LintStore) {
+        todo!()
+    }
 }

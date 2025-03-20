@@ -4,10 +4,7 @@
 //! documents a lint's name, group, and short description, such as
 //! [`missing_reflect::MISSING_REFLECT`].
 
-use crate::lint::BevyLint;
-use rustc_lint::{Lint, LintStore};
-
-mod cargo;
+use rustc_lint::{Level, Lint, LintId, LintStore};
 
 pub mod complexity;
 pub mod correctness;
@@ -18,45 +15,62 @@ pub mod restriction;
 pub mod style;
 pub mod suspicious;
 
-pub mod borrowed_reborrowable;
-pub mod duplicate_bevy_dependencies;
-pub mod insert_event_resource;
-pub mod insert_unit_bundle;
-pub mod main_return_without_appexit;
-pub mod missing_reflect;
-pub mod panicking_methods;
-pub mod plugin_not_ending_in_plugin;
-pub mod zst_query;
+/// Represents a lint group.
+trait LintGroup {
+    /// The name of this lint group.
+    const NAME: &str;
 
-pub(crate) static LINTS: &[&BevyLint] = &[
-    borrowed_reborrowable::BORROWED_REBORROWABLE,
-    duplicate_bevy_dependencies::DUPLICATE_BEVY_DEPENDENCIES,
-    insert_event_resource::INSERT_EVENT_RESOURCE,
-    insert_unit_bundle::INSERT_UNIT_BUNDLE,
-    main_return_without_appexit::MAIN_RETURN_WITHOUT_APPEXIT,
-    missing_reflect::MISSING_REFLECT,
-    panicking_methods::PANICKING_METHODS,
-    plugin_not_ending_in_plugin::PLUGIN_NOT_ENDING_IN_PLUGIN,
-    zst_query::ZST_QUERY,
-];
+    /// The default lint level of the group.
+    const LEVEL: Level;
+
+    /// A list of [`BevyLint`]s in this lint group.
+    const LINTS: &[&Lint];
+
+    /// Registers all of this groups [`LINTS`] with a given [`LintStore`].
+    fn register_lints(store: &mut LintStore) {
+        store.register_lints(Self::LINTS);
+    }
+
+    /// Registers all of this group's lint passes with a given [`LintStore`].
+    fn register_passes(store: &mut LintStore);
+
+    /// Registers this lint group with a given [`LintStore`].
+    fn register_group(store: &mut LintStore) {
+        // Convert `BevyLint`s into `LintId`s, then put the result in a `Vec<_>`.
+        let lints: Vec<LintId> = Self::LINTS.iter().copied().map(LintId::of).collect();
+        store.register_group(true, Self::NAME, None, lints);
+    }
+}
 
 pub(crate) fn register_lints(store: &mut LintStore) {
-    let lints: Vec<&Lint> = LINTS.iter().map(|x| x.lint).collect();
-    store.register_lints(&lints);
+    complexity::Complexity::register_lints(store);
+    correctness::Correctness::register_lints(store);
+    nursery::Nursery::register_lints(store);
+    pedantic::Pedantic::register_lints(store);
+    performance::Performance::register_lints(store);
+    restriction::Restriction::register_lints(store);
+    style::Style::register_lints(store);
+    suspicious::Suspicious::register_lints(store);
 }
 
 pub(crate) fn register_passes(store: &mut LintStore) {
-    store.register_late_pass(|_| Box::new(borrowed_reborrowable::BorrowedReborrowable::default()));
-    store.register_late_pass(|_| Box::new(cargo::Cargo::default()));
-    store.register_late_pass(|_| Box::new(insert_event_resource::InsertEventResource::default()));
-    store.register_late_pass(|_| {
-        Box::new(main_return_without_appexit::MainReturnWithoutAppExit::default())
-    });
-    store.register_late_pass(|_| Box::new(missing_reflect::MissingReflect::default()));
-    store.register_late_pass(|_| Box::new(panicking_methods::PanickingMethods::default()));
-    store.register_late_pass(|_| {
-        Box::new(plugin_not_ending_in_plugin::PluginNotEndingInPlugin::default())
-    });
-    store.register_late_pass(|_| Box::new(zst_query::ZstQuery::default()));
-    store.register_late_pass(|_| Box::new(insert_unit_bundle::InsertUnitBundle::default()));
+    complexity::Complexity::register_passes(store);
+    correctness::Correctness::register_passes(store);
+    nursery::Nursery::register_passes(store);
+    pedantic::Pedantic::register_passes(store);
+    performance::Performance::register_passes(store);
+    restriction::Restriction::register_passes(store);
+    style::Style::register_passes(store);
+    suspicious::Suspicious::register_passes(store);
+}
+
+pub(crate) fn register_groups(store: &mut LintStore) {
+    complexity::Complexity::register_group(store);
+    correctness::Correctness::register_group(store);
+    nursery::Nursery::register_group(store);
+    pedantic::Pedantic::register_group(store);
+    performance::Performance::register_group(store);
+    restriction::Restriction::register_group(store);
+    style::Style::register_group(store);
+    suspicious::Suspicious::register_group(store);
 }

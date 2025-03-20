@@ -1,11 +1,15 @@
-use rustc_lint::Level;
+use rustc_lint::{Level, Lint, LintStore};
 
-use crate::declare_bevy_group;
+use super::LintGroup;
 
-declare_bevy_group! {
-    /// A group that offers suggestions on how to simplify your code.
-    pub static COMPLEXITY = {
-        name: "bevy::complexity",
-        level: Level::Warn,
-    };
+pub struct Complexity;
+
+impl LintGroup for Complexity {
+    const NAME: &str = "bevy::complexity";
+    const LEVEL: Level = Level::Warn;
+    const LINTS: &[&Lint] = &[];
+
+    fn register_passes(_store: &mut LintStore) {
+        todo!()
+    }
 }

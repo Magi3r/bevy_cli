@@ -1,33 +1,3 @@
-use rustc_lint::{Level, Lint, LintId};
-
-/// A Bevy lint definition and its associated group.
-///
-/// The level of the lint must be the same as the level of the group.
-#[derive(Debug)]
-pub struct BevyLint {
-    pub lint: &'static Lint,
-    pub group: &'static LintGroup,
-}
-
-impl BevyLint {
-    pub fn id(&self) -> LintId {
-        LintId::of(self.lint)
-    }
-}
-
-/// Represents a lint group.
-#[derive(PartialEq, Debug)]
-pub struct LintGroup {
-    /// The name of the lint group.
-    ///
-    /// This will be used when trying to enable / disable the group, such as through
-    /// `#![allow(group)]`. By convention, this should start with `bevy::`.
-    pub name: &'static str,
-
-    // The default level all lints within this group should be.
-    pub level: Level,
-}
-
 /// Creates a new [`BevyLint`].
 ///
 /// # Example
@@ -149,36 +119,5 @@ macro_rules! declare_bevy_lint_pass {
         }
 
         ::rustc_lint_defs::impl_lint_pass!($name => [$($lint),*]);
-    };
-}
-
-/// A macro for declaring [`LintGroup`]s that auto-generates a table with the name and default
-/// level in the documentation.
-#[macro_export]
-#[doc(hidden)]
-macro_rules! declare_bevy_group {
-    {
-        $(#[$attr:meta])*
-        $vis:vis static $static_name:ident = {
-            name: $group_name:literal,
-            level: $level:expr$(,)?
-        };
-    } => {
-        $(#[$attr])*
-        ///
-        /// <table>
-        ///     <tr>
-        ///         <td>Name</td>
-        #[doc = concat!("        <td><code>", stringify!($group_name), "</code></td>")]
-        ///     </tr>
-        ///     <tr>
-        ///         <td>Default Level</td>
-        #[doc = concat!("        <td><code>", stringify!($level), "</code></td>")]
-        ///     </tr>
-        /// </table>
-        $vis static $static_name: &$crate::lint::LintGroup = &$crate::lint::LintGroup {
-            name: $group_name,
-            level: $level,
-        };
     };
 }

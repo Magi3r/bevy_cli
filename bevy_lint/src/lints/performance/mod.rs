@@ -1,11 +1,15 @@
-use rustc_lint::Level;
+use rustc_lint::{Level, Lint, LintStore};
 
-use crate::declare_bevy_group;
+use super::LintGroup;
 
-declare_bevy_group! {
-    /// A group that suggests how to increase the performance of your code.
-    pub static PERFORMANCE = {
-        name: "bevy::performance",
-        level: Level::Warn,
-    };
+pub struct Performance;
+
+impl LintGroup for Performance {
+    const NAME: &str = "bevy::performance";
+    const LEVEL: Level = Level::Warn;
+    const LINTS: &[&Lint] = &[];
+
+    fn register_passes(_store: &mut LintStore) {
+        todo!()
+    }
 }
