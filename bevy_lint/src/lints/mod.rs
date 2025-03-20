@@ -9,6 +9,15 @@ use rustc_lint::{Lint, LintStore};
 
 mod cargo;
 
+pub mod complexity;
+pub mod correctness;
+pub mod nursery;
+pub mod pedantic;
+pub mod performance;
+pub mod restriction;
+pub mod style;
+pub mod suspicious;
+
 pub mod borrowed_reborrowable;
 pub mod duplicate_bevy_dependencies;
 pub mod insert_event_resource;
