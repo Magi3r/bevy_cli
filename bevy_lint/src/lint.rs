@@ -60,7 +60,7 @@ macro_rules! declare_bevy_lint {
     {
         $(#[$attr:meta])*
         $vis:vis $name:ident,
-        $group:ident,
+        $group:path,
         $desc:expr,
         $(@report_in_external_macro = $report_in_external_macro:expr,)?
         $(@crate_level_only = $crate_level_only:expr,)?
@@ -80,7 +80,7 @@ macro_rules! declare_bevy_lint {
             lint: &::rustc_lint::Lint {
                 // Fields that are always configured by macro.
                 name: concat!("bevy::", stringify!($name)),
-                default_level: $crate::groups::$group.level,
+                default_level: $group.level,
                 desc: $desc,
 
                 // Fields that cannot be configured.
@@ -97,7 +97,7 @@ macro_rules! declare_bevy_lint {
 
                 ..::rustc_lint::Lint::default_fields_for_macro()
             },
-            group: &$crate::groups::$group,
+            group: &$group,
         };
     };
 }
@@ -149,5 +149,36 @@ macro_rules! declare_bevy_lint_pass {
         }
 
         ::rustc_lint_defs::impl_lint_pass!($name => [$($lint),*]);
+    };
+}
+
+/// A macro for declaring [`LintGroup`]s that auto-generates a table with the name and default
+/// level in the documentation.
+#[macro_export]
+#[doc(hidden)]
+macro_rules! declare_bevy_group {
+    {
+        $(#[$attr:meta])*
+        $vis:vis static $static_name:ident = {
+            name: $group_name:literal,
+            level: $level:expr$(,)?
+        };
+    } => {
+        $(#[$attr])*
+        ///
+        /// <table>
+        ///     <tr>
+        ///         <td>Name</td>
+        #[doc = concat!("        <td><code>", stringify!($group_name), "</code></td>")]
+        ///     </tr>
+        ///     <tr>
+        ///         <td>Default Level</td>
+        #[doc = concat!("        <td><code>", stringify!($level), "</code></td>")]
+        ///     </tr>
+        /// </table>
+        $vis static $static_name: &$crate::lint::LintGroup = &$crate::lint::LintGroup {
+            name: $group_name,
+            level: $level,
+        };
     };
 }
