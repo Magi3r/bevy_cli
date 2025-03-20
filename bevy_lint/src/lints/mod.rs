@@ -4,7 +4,8 @@
 //! documents a lint's name, group, and short description, such as
 //! [`missing_reflect::MISSING_REFLECT`].
 
-use rustc_lint::{Level, Lint, LintId, LintStore};
+use crate::lint::LintGroup;
+use rustc_lint::LintStore;
 
 pub mod complexity;
 pub mod correctness;
@@ -14,33 +15,6 @@ pub mod performance;
 pub mod restriction;
 pub mod style;
 pub mod suspicious;
-
-/// Represents a lint group.
-trait LintGroup {
-    /// The name of this lint group.
-    const NAME: &str;
-
-    /// The default lint level of the group.
-    const LEVEL: Level;
-
-    /// A list of [`BevyLint`]s in this lint group.
-    const LINTS: &[&Lint];
-
-    /// Registers all of this groups [`LINTS`] with a given [`LintStore`].
-    fn register_lints(store: &mut LintStore) {
-        store.register_lints(Self::LINTS);
-    }
-
-    /// Registers all of this group's lint passes with a given [`LintStore`].
-    fn register_passes(store: &mut LintStore);
-
-    /// Registers this lint group with a given [`LintStore`].
-    fn register_group(store: &mut LintStore) {
-        // Convert `BevyLint`s into `LintId`s, then put the result in a `Vec<_>`.
-        let lints: Vec<LintId> = Self::LINTS.iter().copied().map(LintId::of).collect();
-        store.register_group(true, Self::NAME, None, lints);
-    }
-}
 
 pub(crate) fn register_lints(store: &mut LintStore) {
     complexity::Complexity::register_lints(store);

@@ -1,6 +1,6 @@
 use rustc_lint::{Level, Lint, LintStore};
 
-use super::LintGroup;
+use crate::lint::LintGroup;
 
 pub struct Nursery;
 

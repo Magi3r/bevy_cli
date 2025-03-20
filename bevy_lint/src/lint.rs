@@ -1,3 +1,32 @@
+use rustc_lint::{Level, Lint, LintId, LintStore};
+
+/// Represents a lint group.
+pub trait LintGroup {
+    /// The name of this lint group.
+    const NAME: &str;
+
+    /// The default lint level of the group.
+    const LEVEL: Level;
+
+    /// A list of [`BevyLint`]s in this lint group.
+    const LINTS: &[&Lint];
+
+    /// Registers all of this groups [`LINTS`] with a given [`LintStore`].
+    fn register_lints(store: &mut LintStore) {
+        store.register_lints(Self::LINTS);
+    }
+
+    /// Registers all of this group's lint passes with a given [`LintStore`].
+    fn register_passes(store: &mut LintStore);
+
+    /// Registers this lint group with a given [`LintStore`].
+    fn register_group(store: &mut LintStore) {
+        // Convert `BevyLint`s into `LintId`s, then put the result in a `Vec<_>`.
+        let lints: Vec<LintId> = Self::LINTS.iter().copied().map(LintId::of).collect();
+        store.register_group(true, Self::NAME, None, lints);
+    }
+}
+
 /// Creates a new [`BevyLint`].
 ///
 /// # Example
