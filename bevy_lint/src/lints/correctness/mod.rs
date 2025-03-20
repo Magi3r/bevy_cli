@@ -9,7 +9,5 @@ impl LintGroup for Correctness {
     const LEVEL: Level = Level::Deny;
     const LINTS: &[&Lint] = &[];
 
-    fn register_passes(_store: &mut LintStore) {
-        todo!()
-    }
+    fn register_passes(_store: &mut LintStore) {}
 }

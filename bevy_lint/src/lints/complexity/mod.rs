@@ -9,7 +9,5 @@ impl LintGroup for Complexity {
     const LEVEL: Level = Level::Warn;
     const LINTS: &[&Lint] = &[];
 
-    fn register_passes(_store: &mut LintStore) {
-        todo!()
-    }
+    fn register_passes(_store: &mut LintStore) {}
 }
