@@ -67,14 +67,14 @@ use rustc_span::Span;
 
 declare_bevy_lint! {
     pub MISSING_REFLECT,
-    super::restriction::RESTRICTION,
+    super::Restriction,
     "defined a component, resource, or event without a `Reflect` implementation",
     // We only override `check_crate()`.
     @crate_level_only = true,
 }
 
 declare_bevy_lint_pass! {
-    pub MissingReflect => [MISSING_REFLECT.lint],
+    pub MissingReflect => [MISSING_REFLECT],
 }
 
 impl<'tcx> LateLintPass<'tcx> for MissingReflect {
@@ -113,7 +113,7 @@ impl<'tcx> LateLintPass<'tcx> for MissingReflect {
             for without_reflect in checked_trait {
                 span_lint_hir_and_then(
                     cx,
-                    MISSING_REFLECT.lint,
+                    MISSING_REFLECT,
                     // This tells `rustc` where to search for `#[allow(...)]` attributes.
                     without_reflect.hir_id,
                     without_reflect.item_span,

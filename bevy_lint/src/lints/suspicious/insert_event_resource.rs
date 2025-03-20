@@ -58,12 +58,12 @@ use std::borrow::Cow;
 
 declare_bevy_lint! {
     pub INSERT_EVENT_RESOURCE,
-    super::suspicious::SUSPICIOUS,
+    super::Suspicious,
     "called `App::insert_resource(Events<T>)` or `App::init_resource::<Events<T>>()` instead of `App::add_event::<T>()`",
 }
 
 declare_bevy_lint_pass! {
-    pub InsertEventResource => [INSERT_EVENT_RESOURCE.lint],
+    pub InsertEventResource => [INSERT_EVENT_RESOURCE],
     @default = {
         insert_resource: Symbol = sym!(insert_resource),
         init_resource: Symbol = sym!(init_resource),
@@ -125,7 +125,7 @@ fn check_insert_resource(cx: &LateContext<'_>, method_call: &MethodCall) {
             let receiver_snippet = snippet(cx, method_call.receiver.span, "");
             span_lint_and_sugg(
                 cx,
-                INSERT_EVENT_RESOURCE.lint,
+                INSERT_EVENT_RESOURCE,
                 method_call.span,
                 format!(
                     "called `App::insert_resource{generics_snippet}({receiver_snippet}, {args_snippet})` instead of `App::add_event::<{event_ty_snippet}>({receiver_snippet})`"
@@ -137,7 +137,7 @@ fn check_insert_resource(cx: &LateContext<'_>, method_call: &MethodCall) {
         } else {
             span_lint_and_sugg(
                 cx,
-                INSERT_EVENT_RESOURCE.lint,
+                INSERT_EVENT_RESOURCE,
                 method_call.span,
                 format!(
                     "called `App::insert_resource{generics_snippet}({args_snippet})` instead of `App::add_event::<{event_ty_snippet}>()`"
@@ -205,7 +205,7 @@ fn check_init_resource<'tcx>(cx: &LateContext<'tcx>, method_call: &MethodCall<'t
                 let receiver_snippet = snippet(cx, method_call.receiver.span, "");
                 span_lint_and_sugg(
                     cx,
-                    INSERT_EVENT_RESOURCE.lint,
+                    INSERT_EVENT_RESOURCE,
                     method_call.span,
                     format!(
                         "called `App::init_resource{generics_snippet}({receiver_snippet})` instead of `App::add_event::<{event_ty_snippet}>({receiver_snippet})`"
@@ -217,7 +217,7 @@ fn check_init_resource<'tcx>(cx: &LateContext<'tcx>, method_call: &MethodCall<'t
             } else {
                 span_lint_and_sugg(
                     cx,
-                    INSERT_EVENT_RESOURCE.lint,
+                    INSERT_EVENT_RESOURCE,
                     method_call.span,
                     format!(
                         "called `App::init_resource{generics_snippet}({args_snippet})` instead of `App::add_event::<{event_ty_snippet}>()`"
